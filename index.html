@@ -1,253 +1,441 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>منسّق الاختبارات — نسخة مبسّطة</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منسّق الاختبارات V4 — Royal Edition</title>
 <style>
-  :root{--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--bg:#f7fafc;--card:#fff;--paper:#fff}
+  :root{
+    --ink:#0f172a; --muted:#475569; --line:#e5e7eb; --paper:#ffffff; --accent:#1f2937;
+    --gap:12px;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Simplified Arabic","Tahoma","Segoe UI",Arial,sans-serif}
-  header{position:sticky;top:0;background:#fff8;border-bottom:1px solid var(--line);backdrop-filter:saturate(180%) blur(6px);z-index:10}
-  .wrap{max-width:1100px;margin:auto;padding:12px 16px;display:flex;gap:10px;align-items:center}
+  html,body{margin:0;background:#f6f8fa;color:var(--ink);font-family:"Simplified Arabic","Tahoma","Segoe UI",Arial,sans-serif}
+  header.app{position:sticky;top:0;background:#ffffffcc;border-bottom:1px solid var(--line);backdrop-filter:saturate(180%) blur(8px);z-index:10}
+  .wrap{max-width:1200px;margin:auto;padding:10px 14px;display:flex;gap:10px;align-items:center}
   .brand{font-weight:900}
-  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-  .btn.p{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff}
-  .btn.g{background:#f1f5f9}
-  .grid{display:grid;grid-template-columns:380px 1fr;gap:16px;padding:16px}
-  @media(max-width:980px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer}
+  .btn.primary{border-color:#2563eb;background:#2563eb;color:#fff}
+  .btn.ghost{background:#f1f5f9}
+  .grid{max-width:1200px;margin:16px auto;display:grid;grid-template-columns:380px 1fr;gap:16px}
+  @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
   h2{margin:6px 0 12px;font-size:18px}
+  label{font-size:12px;color:var(--muted)}
   input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
-  textarea{min-height:90px;resize:vertical}
+  textarea{min-height:110px;resize:vertical}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hr{height:1px;background:var(--line);margin:12px 0}
   .list{display:flex;flex-direction:column;gap:8px}
-  .qcard{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px;display:flex;gap:10px;align-items:flex-start;position:relative}
-  .handle{cursor:grab;color:#94a3b8}
-  .tools{position:absolute;inset-inline-end:8px;inset-block-start:8px;display:flex;gap:6px}
-  .tools button{background:#f1f5f9;border:1px solid #e5e7eb;border-radius:8px;padding:6px 8px;cursor:pointer}
-  .paper{background:var(--paper);color:#000;padding:18mm 16mm;width:210mm;min-height:297mm;margin:auto;box-shadow:0 0 0.5mm rgba(0,0,0,.05)}
-  .paper .header{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:start;margin-bottom:10px}
-  .paper .logo img{width:140px;height:auto}
-  .title{font-weight:800}
-  .small{font-size:12px;color:#334155}
-  .info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
-  .field{border-bottom:1px solid #000;min-height:26px;padding:4px 6px}
-  .q{margin:10px 0;padding-bottom:8px;border-bottom:1px dashed #94a3b8}
-  .choices{display:grid;gap:4px;margin-top:6px}
-  .bubble{width:18px;height:18px;border:2px solid #000;border-radius:50%;display:inline-block;margin-left:6px}
-  .footer{display:flex;justify-content:center;margin:18px 0 8px}
-  .x{border:1px solid #e2e8f0;border-radius:999px;padding:10px 14px;text-decoration:none;color:#0f172a;background:#fff}
-  @media print{header,.controls,.footer{display:none!important} body{background:#fff} .paper{margin:0;box-shadow:none;page-break-after:always}}
+  .qcard{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px;position:relative}
+  .qtools{position:absolute;inset-inline-end:8px;inset-block-start:8px;display:flex;gap:6px}
+  .qtools .mini{padding:6px 8px;border-radius:8px;background:#f1f5f9;border:1px solid #e5e7eb;font-size:12px;cursor:pointer}
+  .qtext[contenteditable], .choice[contenteditable]{outline:none}
+  .notice{font-size:12px;color:#64748b}
+  .preview{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0}
+  /* Paper */
+  .paper{background:var(--paper);color:#000;padding:18mm 16mm; width:210mm; min-height:297mm; margin:auto}
+  .headerline{display:grid;grid-template-columns:1fr 140px;gap:10px;align-items:start;margin-bottom:10px}
+  .logo img{width:130px;height:auto}
+  .title{font-weight:800;font-size:18px;margin:6px 0}
+  .headgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .field{border-bottom:1px solid #000;padding:4px 6px;min-height:26px}
+  .q{margin:10px 0;padding-bottom:10px;border-bottom:1px dashed #94a3b8}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+  .choice-line{display:flex;gap:8px;align-items:center}
+  .bubble{width:18px;height:18px;border:2px solid #111;border-radius:50%}
+  .foot{display:flex;justify-content:center;margin:16px 0}
+  /* Print */
+  @media print{
+    header.app, .no-print { display:none !important; }
+    body { background:#fff; }
+    .paper { page-break-after:always; margin:0; }
+  }
+  /* LTR when English */
+  .ltr{direction:ltr}
+  .ltr .headerline{grid-template-columns:140px 1fr}
+  .ltr .headerline .logo{order:0}
+  .ltr .headerline .headinfo{order:1}
+  .ltr .choices{grid-template-columns:1fr 1fr}
 </style>
 </head>
 <body>
-
-<header>
+<header class="app">
   <div class="wrap">
-    <!-- غيّر قيمة LOGO_SRC تحت لجعل الشعار داخليًا أو من رابط -->
-    <img id="topLogo" alt="شعار الهيئة" style="height:42px;border-radius:6px" />
-    <span class="brand">منسّق الاختبارات — نسخة مبسّطة</span>
-    <div class="controls" style="margin-inline-start:auto;display:flex;gap:8px">
-      <button id="build" class="btn p">أنشئ الورقة + معاينة</button>
-      <button id="print" class="btn g">تصدير PDF</button>
+    <!-- شعار نظيف (SVG مضمّن) -->
+    <div class="logo" aria-hidden="true" title="RCJY">
+      <img alt="RCJY" src='data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8"?>
+      <svg xmlns="http://www.w3.org/2000/svg" width="320" height="120" viewBox="0 0 320 120">
+        <rect x="0" y="0" width="320" height="120" fill="white"/>
+        <circle cx="60" cy="60" r="44" fill="%232563eb"/>
+        <circle cx="60" cy="60" r="30" fill="white"/>
+        <text x="120" y="72" font-family="Arial, sans-serif" font-weight="700" font-size="36" fill="%231f2937">RCJY</text>
+      </svg>'/>
+    </div>
+    <span class="brand" id="brandTxt">منسّق الاختبارات — V4</span>
+    <div style="margin-inline-start:auto;display:flex;gap:8px">
+      <button class="btn" id="toggleLang" title="تبديل اللغة/الاتجاه">🇸🇦 عربي</button>
+      <button class="btn primary" id="build">أنشئ الورقة + معاينة</button>
+      <button class="btn" id="exportPDF">تصدير PDF</button>
+      <button class="btn" id="exportDocx">تصدير Word</button>
     </div>
   </div>
 </header>
 
 <div class="grid">
   <section class="card">
-    <h2>الأسئلة</h2>
-    <div style="display:flex;gap:8px">
-      <select id="qType"><option value="mcq">اختياري</option><option value="essay">مقالي</option></select>
-      <button id="add" class="btn g">أضف السؤال</button>
-    </div>
-    <div id="cards" class="list" style="margin-top:8px"></div>
+    <h2 id="hBuilder">إنشاء الأسئلة</h2>
+    <div class="notice" id="hint">ضع نجمة * بجانب الخيار الصحيح. مثال: <b>* التخطيط والتنفيذ</b></div>
 
-    <h2 style="margin-top:16px">لصق جماعي</h2>
-    <textarea id="bulk" placeholder="س: ما تعريف إدارة المشروع؟
+    <div class="row" style="margin-top:8px">
+      <select id="qType">
+        <option value="mcq">اختياري</option>
+        <option value="essay">مقالي</option>
+      </select>
+      <button class="btn" id="addQ">أضف السؤال كبطاقة</button>
+      <button class="btn" id="clearAll">حذف الكل</button>
+    </div>
+
+    <div class="hr"></div>
+    <div id="cards" class="list" aria-live="polite"></div>
+
+    <div class="hr"></div>
+    <h2 id="hBulk">لصق جماعي</h2>
+    <div class="notice" id="bulkHelp">
+      تنسيق بسيط: سطر سؤال ينتهي بـ (؟ أو ?)، ثم من 2 إلى 4 أسطر خيارات تحته (النجمة تحدد الصحيح).
+    </div>
+    <textarea id="bulkTxt" placeholder="ما تعريف إدارة المشروع؟
 أ) التخطيط والتنفيذ*
 ب) التصميم فقط
 ج) الصيانة فقط
 
-س: ما دور مدير المشروع؟
+ما دور مدير المشروع؟
 - التخطيط*
 - لا شيء
 - المراقبة"></textarea>
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <button id="preview" class="btn g">معاينة</button>
-      <button id="import" class="btn p">تحويل إلى بطاقات</button>
+    <div class="row" style="margin-top:6px">
+      <button class="btn" id="previewBulk">معاينة</button>
+      <button class="btn primary" id="importBulk">تحويل إلى بطاقات</button>
     </div>
-    <div id="bulkPrev" class="small" style="margin-top:6px;color:#475569"></div>
+    <div id="bulkPreview" class="notice" style="margin-top:6px"></div>
 
-    <h2 style="margin-top:16px">إعدادات</h2>
-    <input id="title" value="اختبار الفترة الأولى" />
-    <input id="header" value="الهيئة الملكية — الثانوية ........ — الفصل: الأول — العام: 1447 هـ" style="margin-top:6px" />
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
-      <label>خلط الأسئلة</label><select id="shQ"><option value="yes">نعم</option><option value="no">لا</option></select>
-      <label>خلط الخيارات</label><select id="shC"><option value="yes">نعم</option><option value="no">لا</option></select>
-      <label>النماذج</label><select id="vars"><option>1</option><option>2</option><option>3</option><option>4</option></select>
-      <input id="code" placeholder="رمز (اختياري)" />
+    <div class="hr"></div>
+    <h2 id="hSettings">إعدادات الورقة</h2>
+    <div class="split">
+      <div>
+        <label id="labTitle">عنوان الورقة</label>
+        <input id="paperTitle" value="اختبار الفترة الأولى">
+      </div>
+      <div>
+        <label id="labHeader">سطر معلومات الرأس</label>
+        <input id="headerInfo" value="الهيئة الملكية — الثانوية ........ — الفصل: الأول — العام: 1447 هـ">
+      </div>
+    </div>
+    <div class="split" style="margin-top:8px">
+      <div>
+        <label id="labShuffleQ">خلط ترتيب الأسئلة</label>
+        <select id="shuffleQuestions"><option value="yes">نعم</option><option value="no">لا</option></select>
+      </div>
+      <div>
+        <label id="labShuffleC">خلط خيارات السؤال</label>
+        <select id="shuffleChoices"><option value="yes">نعم</option><option value="no">لا</option></select>
+      </div>
+    </div>
+    <div class="split" style="margin-top:8px">
+      <div>
+        <label id="labVariants">عدد النماذج</label>
+        <select id="variantCount"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+      </div>
+      <div>
+        <label id="labCode">رمز الاختبار (اختياري)</label>
+        <input id="codeValue" placeholder="FEH0-D-01">
+      </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>المعاينة</h2>
-    <div id="previewArea"><div class="small">أضف بطاقات ثم اضغط "أنشئ الورقة + معاينة".</div></div>
+    <h2 id="hPreview">المعاينة</h2>
+    <div id="preview" class="preview">
+      <div class="paper no-print" style="padding:16px">
+        <div class="notice">بعد إنشاء بطاقات الأسئلة ثم الضغط على “أنشئ الورقة + معاينة” ستظهر الورقة المطبوعة هنا.</div>
+      </div>
+    </div>
+    <div class="foot">
+      <a class="btn" href="https://x.com/malsadhan01" target="_blank" rel="noopener">تابعني على X</a>
+    </div>
   </section>
 </div>
 
-<div class="footer">
-  <a class="x" href="https://x.com/malsadhan01" target="_blank" rel="noopener">تابعني على X</a>
-</div>
-
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  // 1) الشعار: اختر أحد الخيارين
-  // أ) ملف داخلي بجانب index.html
-  var LOGO_SRC = 'logo-rcjy.jpg';
-  // ب) أو رابط مباشر للشعار (مثال):
-  // var LOGO_SRC = 'https://your-cdn.com/rcjy-logo.jpg';
-  document.getElementById('topLogo').src = LOGO_SRC;
-
-  // أدوات مساعدة
-  var cards = document.getElementById('cards');
-  function mk(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+(function(){
+  // Utilities
+  var $ = function(s){ return document.querySelector(s); };
   function shuffle(a){ return a.map(function(x){return [Math.random(),x]}).sort(function(a,b){return a[0]-b[0]}).map(function(x){return x[1]}); }
+  function norm(s){ return (s||'').replace(/\\r/g,'').replace(/[\\u200f\\u200e]/g,'').trim(); }
+  function toArabicDigits(n){
+    var d = String(n).split('');
+    var m = {'0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩'};
+    return d.map(function(c){ return m[c]||c; }).join('');
+  }
 
-  // إضافة بطاقة سؤال
-  function addCard(obj){
-    obj = obj || {type:'mcq', text:'اكتب السؤال هنا؟', options:['خيار 1','خيار 2','خيار 3'], correctIndex:0};
-    var card = mk('div','qcard');
-    card.appendChild(mk('span','handle','↕'));
-    var body = mk('div','', '<div class="qtext" contenteditable="true">'+(obj.text||'اكتب السؤال هنا؟')+'</div>');
-    if(obj.type==='mcq'){
-      var ch = mk('div','choices');
-      (obj.options||['خيار 1','خيار 2','خيار 3']).forEach(function(o,i){
-        ch.appendChild(mk('div','choice', (i===obj.correctIndex?'<b>*</b> ':'') + o));
-      });
-      body.appendChild(ch);
-    }else{
-      body.appendChild(mk('div','small','[إجابة مقالية: اكتب تعليمات مختصرة هنا]'));
+  var state = { lang:'ar' }; // 'ar' or 'en'
+
+  // Language toggle
+  var i18n = {
+    ar: {
+      brand:'منسّق الاختبارات — V4',
+      build:'أنشئ الورقة + معاينة', pdf:'تصدير PDF', doc:'تصدير Word',
+      builder:'إنشاء الأسئلة', hint:'ضع نجمة * بجانب الخيار الصحيح. مثال: * التخطيط والتنفيذ',
+      add:'أضف السؤال كبطاقة', clear:'حذف الكل',
+      bulk:'لصق جماعي', bulkHelp:'سطر سؤال (؟/?) ثم 2-4 أسطر خيارات تحته. النجمة للصحيح.',
+      settings:'إعدادات الورقة', labTitle:'عنوان الورقة', labHeader:'سطر معلومات الرأس',
+      labShuffleQ:'خلط ترتيب الأسئلة', labShuffleC:'خلط خيارات السؤال',
+      labVariants:'عدد النماذج', labCode:'رمز الاختبار (اختياري)',
+      preview:'المعاينة', langBtn:'🇸🇦 عربي'
+    },
+    en: {
+      brand:'Exam Coordinator — V4',
+      build:'Build Paper + Preview', pdf:'Export PDF', doc:'Export Word',
+      builder:'Question Builder', hint:'Mark the correct option with * (asterisk). Example: * Correct answer',
+      add:'Add Question Card', clear:'Delete All',
+      bulk:'Bulk Paste', bulkHelp:'One question line ending with ? then 2–4 option lines. Asterisk marks the correct one.',
+      settings:'Paper Settings', labTitle:'Paper Title', labHeader:'Header Info',
+      labShuffleQ:'Shuffle Questions', labShuffleC:'Shuffle Choices',
+      labVariants:'Variants', labCode:'Exam Code (optional)',
+      preview:'Preview', langBtn:'🇬🇧 English'
     }
-    card.appendChild(body);
-    var tools = mk('div','tools');
-    var del = mk('button','', 'حذف'); var type = mk('button','', obj.type==='mcq'?'تحويل لمقالي':'تحويل لاختياري');
-    del.onclick=function(){ card.remove(); };
-    type.onclick=function(){
-      var isMCQ = !!card.querySelector('.choices');
-      if(isMCQ){
-        card.querySelector('.choices').remove();
-        body.appendChild(mk('div','small','[إجابة مقالية: اكتب تعليمات مختصرة هنا]'));
-        type.textContent='تحويل لاختياري';
-      }else{
-        var ch2 = mk('div','choices');
-        ch2.innerHTML = '<div class="choice"><b>*</b> خيار 1</div><div class="choice">خيار 2</div><div class="choice">خيار 3</div>';
-        body.querySelector('.small').remove();
-        body.appendChild(ch2);
-        type.textContent='تحويل لمقالي';
+  };
+  function applyLang(){
+    var t = i18n[state.lang];
+    $('#brandTxt').textContent = t.brand;
+    $('#build').textContent = t.build;
+    $('#exportPDF').textContent = t.pdf;
+    $('#exportDocx').textContent = t.doc;
+    $('#hBuilder').textContent = t.builder;
+    $('#hint').textContent = t.hint;
+    $('#addQ').textContent = t.add;
+    $('#clearAll').textContent = t.clear;
+    $('#hBulk').textContent = t.bulk;
+    $('#bulkHelp').textContent = t.bulkHelp;
+    $('#hSettings').textContent = t.settings;
+    $('#labTitle').textContent = t.labTitle;
+    $('#labHeader').textContent = t.labHeader;
+    $('#labShuffleQ').textContent = t.labShuffleQ;
+    $('#labShuffleC').textContent = t.labShuffleC;
+    $('#labVariants').textContent = t.labVariants;
+    $('#labCode').textContent = t.labCode;
+    $('#hPreview').textContent = t.preview;
+    $('#toggleLang').textContent = t.langBtn;
+
+    // Switch dir
+    if(state.lang==='en'){
+      document.documentElement.lang='en';
+      document.documentElement.dir='ltr';
+      $('#preview').classList.add('ltr');
+    } else {
+      document.documentElement.lang='ar';
+      document.documentElement.dir='rtl';
+      $('#preview').classList.remove('ltr');
+    }
+  }
+
+  $('#toggleLang').addEventListener('click', function(){
+    state.lang = (state.lang==='ar'?'en':'ar');
+    applyLang();
+  });
+  applyLang();
+
+  // Cards
+  var cards = $('#cards');
+  function makeCard(obj){
+    obj = obj || {type:'mcq', text:(state.lang==='ar'?'اكتب السؤال هنا؟':'Write the question here?'), options:['خيار 1','خيار 2','خيار 3'], correctIndex:0};
+    var el = document.createElement('div');
+    el.className='qcard';
+    el.innerHTML = ''
+      + '<div class="qtext" contenteditable="true">'+(obj.text||'')+'</div>'
+      + (obj.type==='mcq'
+         ? '<div class="choices">'
+           + (obj.options||[]).map(function(o,i){
+               return '<div class="choice" contenteditable="true">'+ (i===obj.correctIndex?'* ':'') + o + '</div>';
+             }).join('')
+           + '</div>'
+         : '<div class="essay notice" contenteditable="true">['+(state.lang==='ar'?'إجابة مقالية: اكتب تعليمات مختصرة هنا':'Essay answer: write brief instruction here')+']</div>')
+      + '<div class="qtools">'
+      +   '<button class="mini del">'+(state.lang==='ar'?'حذف':'Delete')+'</button>'
+      +   '<button class="mini type">'+(obj.type==='mcq'?(state.lang==='ar'?'تحويل لمقالي':'To Essay'):(state.lang==='ar'?'تحويل لاختياري':'To MCQ'))+'</button>'
+      + '</div>';
+    el.querySelector('.del').onclick = function(){ el.remove(); };
+    el.querySelector('.type').onclick = function(){
+      var mcq = el.querySelector('.choices');
+      if(mcq){
+        mcq.outerHTML = '<div class="essay notice" contenteditable="true">['+(state.lang==='ar'?'إجابة مقالية: اكتب تعليمات مختصرة هنا':'Essay answer: write brief instruction here')+']</div>';
+        el.querySelector('.type').textContent = (state.lang==='ar'?'تحويل لاختياري':'To MCQ');
+      } else {
+        var essay = el.querySelector('.essay');
+        if(essay) essay.outerHTML = '<div class="choices">'
+          + '<div class="choice" contenteditable="true">* '+(state.lang==='ar'?'خيار ١':'Choice 1')+'</div>'
+          + '<div class="choice" contenteditable="true">'+(state.lang==='ar'?'خيار ٢':'Choice 2')+'</div>'
+          + '<div class="choice" contenteditable="true">'+(state.lang==='ar'?'خيار ٣':'Choice 3')+'</div>'
+          + '</div>';
+        el.querySelector('.type').textContent = (state.lang==='ar'?'تحويل لمقالي':'To Essay');
       }
     };
-    tools.appendChild(del); tools.appendChild(type); card.appendChild(tools);
-    cards.appendChild(card);
+    cards.appendChild(el);
   }
 
-  // لصق جماعي: يعتمد علامة الاستفهام
-  function norm(s){ return (s||'').replace(/\r/g,'').replace(/[\u200f\u200e]/g,'').trim(); }
-  function parseBulk(text){
+  $('#addQ').onclick = function(){ makeCard(); };
+  $('#clearAll').onclick = function(){ if(confirm(state.lang==='ar'?'حذف جميع البطاقات؟':'Delete all cards?')) cards.innerHTML=''; };
+
+  // Bulk parsing — strict: stop collecting options when we hit a line that ends with ? or ؟ (next question)
+  function parseBulkStrict(text){
     var t = norm(text); if(!t) return [];
-    var lines = t.split('\n').map(function(x){return x.trim();}).filter(Boolean);
-    var out=[], currentQ=null, opts=[];
-    function push(){
-      if(!currentQ) return;
-      if(opts.length>=2){
-        var correct = opts.findIndex(function(o){return /\*$/.test(o);}); if(correct<0) correct=0;
-        var clean = opts.map(function(o){return o.replace(/\*+$/,'').replace(/^([A-Da-dأ-د]\)|[A-Da-d]\. |[-•–]\s|[\u2022•]\s/,'');});
-        out.push({type:'mcq', text:currentQ, options:clean, correctIndex:correct});
-      }else{
-        out.push({type:'essay', text:currentQ});
+    var lines = t.split('\\n');
+    var out = []; var i=0;
+    function isQuestionLine(line){ return /[\\?\\؟]\\s*$/.test(line.trim()); }
+    function isOptionLine(line){ return /^\\s*([\\-•–]|[أ-دA-D][\\)\\.])/.test(line.trim()) || true; } // allow plain lines too
+
+    while(i<lines.length){
+      var ln = lines[i].trim();
+      if(!ln){ i++; continue; }
+      if(isQuestionLine(ln)){
+        var qText = ln.replace(/^س[:：.\\-]?\\s*/,'').trim();
+        i++;
+        var opts = [];
+        while(i<lines.length){
+          var ln2 = lines[i].trim();
+          if(!ln2){ i++; continue; }
+          if(isQuestionLine(ln2)) break; // next question — stop options
+          // Normalize option bullets/letters
+          ln2 = ln2.replace(/^([A-Da-dأ-د])[\\)\\.]/,'').replace(/^[-•–]\\s*/,'').trim();
+          opts.push(ln2);
+          if(opts.length===4){ i++; break; } // max 4
+          i++;
+        }
+        // Decide MCQ or Essay
+        if(opts.length>=2){
+          // correct marked with * at the end or start
+          var correct = opts.findIndex(function(o){ return /\\*\\s*$|^\\*\\s*/.test(o); });
+          if(correct<0) correct=0;
+          var clean = opts.map(function(o){ return o.replace(/^\\*\\s*|\\*\\s*$/g,'').trim(); });
+          out.push({type:'mcq', text:qText, options:clean, correctIndex:correct});
+        } else {
+          out.push({type:'essay', text:qText});
+        }
+      } else {
+        i++; // skip any text before first question
       }
-      currentQ=null; opts=[];
     }
-    lines.forEach(function(ln){
-      if(/[؟?]/.test(ln)){ if(currentQ) push(); currentQ = ln.replace(/^س[:：.\-]?\s*/,'').trim(); }
-      else if(currentQ){ opts.push(ln); }
-    });
-    push(); return out;
+    return out;
   }
 
-  // أزرار واجهة
-  document.getElementById('add').onclick = function(){ addCard(); };
-  document.getElementById('preview').onclick = function(){
-    var arr = parseBulk(document.getElementById('bulk').value||'');
-    document.getElementById('bulkPrev').innerHTML = arr.length ? arr.map(function(q,i){
-      return '<div>('+(i+1)+') '+q.text+' — <b>'+(q.type==='mcq'?'اختياري':'مقالي')+'</b></div>';
-    }).join('') : 'لا شيء للمعاينة — تأكد من علامة الاستفهام.';
+  $('#previewBulk').onclick = function(){
+    var arr = parseBulkStrict($('#bulkTxt').value||'');
+    if(arr.length===0){ $('#bulkPreview').textContent = (state.lang==='ar'?'لا شيء للمعاينة — تأكد من علامة الاستفهام.':'Nothing to preview — make sure each question ends with ?'); return; }
+    $('#bulkPreview').innerHTML = arr.map(function(q,idx){
+      var n = (state.lang==='ar'? toArabicDigits(idx+1) : (idx+1));
+      return '<div>(' + n + ') ' + q.text + ' — <b>' + (q.type==='mcq'?(state.lang==='ar'?'اختياري':'MCQ'):(state.lang==='ar'?'مقالي':'Essay')) + '</b></div>';
+    }).join('');
   };
-  document.getElementById('import').onclick = function(){
-    var arr = parseBulk(document.getElementById('bulk').value||''); if(!arr.length) return alert('لا توجد أسئلة صالحة');
-    arr.forEach(addCard); document.getElementById('bulk').value=''; document.getElementById('bulkPrev').innerHTML='';
+  $('#importBulk').onclick = function(){
+    var arr = parseBulkStrict($('#bulkTxt').value||'');
+    if(arr.length===0) return alert(state.lang==='ar'?'لا توجد أسئلة صالحة':'No valid questions');
+    arr.forEach(makeCard); $('#bulkPreview').innerHTML=''; $('#bulkTxt').value='';
+    alert((state.lang==='ar'?'تم تحويل ':'Imported ')+arr.length+(state.lang==='ar'?' سؤالًا إلى بطاقات.':' questions.'));
   };
 
+  // Build paper
   function readCards(){
-    var list=[]; Array.prototype.forEach.call(cards.children, function(card){
-      var text = (card.querySelector('.qtext')||{}).innerText || ''; text=text.trim();
+    var list = [];
+    Array.prototype.forEach.call(cards.children, function(card){
+      var text = (card.querySelector('.qtext')||{}).innerText.trim();
       var mcq = card.querySelector('.choices');
       if(mcq){
-        var opts = Array.prototype.map.call(mcq.querySelectorAll('.choice'), function(c){ return c.textContent.replace('*','').trim(); });
-        var correct = Array.prototype.findIndex.call(mcq.querySelectorAll('.choice'), function(c){ return /\*/.test(c.textContent); });
+        var opts = Array.prototype.map.call(mcq.querySelectorAll('.choice'), function(c){ return c.innerText.trim(); });
+        var correct = opts.findIndex(function(o){ return /^\\*\\s+/.test(o) || /\\s+\\*$/.test(o) || /^\\*/.test(o) || /\\*$/.test(o); });
         if(correct<0) correct=0;
-        list.push({type:'mcq', text:text, options:opts, correctIndex:correct});
-      }else{
+        var clean = opts.map(function(o){ return o.replace(/^\\*\\s*|\\s*\\*$/g,'').trim(); });
+        list.push({type:'mcq', text:text, options:clean, correctIndex:correct});
+      } else {
         list.push({type:'essay', text:text});
       }
-    }); return list;
+    });
+    return list;
   }
 
-  document.getElementById('build').onclick = function(){
-    var qs = readCards(); if(!qs.length) return alert('أضف بطاقات أسئلة أولًا');
-    var title = document.getElementById('title').value.trim()||'اختبار';
-    var header = document.getElementById('header').value.trim();
-    var n = Number(document.getElementById('vars').value);
-    var shQ = document.getElementById('shQ').value==='yes';
-    var shC = document.getElementById('shC').value==='yes';
-    var code = document.getElementById('code').value.trim();
-    var area = document.getElementById('previewArea'); area.innerHTML='';
+  $('#build').onclick = function(){
+    var qs = readCards(); if(qs.length===0) return alert(state.lang==='ar'?'أضف بطاقات أسئلة أولًا':'Add some question cards first');
+    var title = $('#paperTitle').value.trim()|| (state.lang==='ar'?'اختبار':'Exam');
+    var header = $('#headerInfo').value.trim();
+    var n = Number($('#variantCount').value);
+    var shuffleQ = $('#shuffleQuestions').value==='yes';
+    var shuffleC = $('#shuffleChoices').value==='yes';
+    var code = $('#codeValue').value.trim();
+    var prev = $('#preview'); prev.innerHTML='';
 
     for(var v=0; v<n; v++){
-      var sec = mk('section','paper');
-      var head = mk('div','header');
-      head.innerHTML =
-        '<div><div class="title">'+title+' — نموذج '+String.fromCharCode(65+v)+'</div>'
-        +'<div class="info">'
-        +'<div class="field" contenteditable="true">اسم الطالب:</div>'
-        +'<div class="field" contenteditable="true">الصف:</div>'
-        +'<div class="field" contenteditable="true">المادة:</div>'
-        +'<div class="field" contenteditable="true">التاريخ:</div>'
-        +'</div><div class="small" style="margin-top:6px">'+header+(code?(' — رمز: '+code):'')+'</div></div>'
-        +'<div class="logo"><img src="'+LOGO_SRC+'" alt="شعار الهيئة"></div>';
-      sec.appendChild(head);
+      var section = document.createElement('section'); section.className='paper';
+      if(state.lang==='en') section.classList.add('ltr');
 
-      var list = shQ ? shuffle(qs.slice()) : qs.slice();
-      list.forEach(function(q,i){
-        var b = mk('div','q');
-        b.innerHTML = '<div><b>'+(i+1)+')</b> '+q.text+'</div>';
+      // header line
+      var head = document.createElement('div'); head.className='headerline';
+      var headinfo = document.createElement('div'); headinfo.className='headinfo';
+      headinfo.innerHTML = ''
+        + '<div class="title">'+title+' — '+ (state.lang==='ar' ? ('نموذج '+String.fromCharCode(65+v)) : ('Form '+String.fromCharCode(65+v))) +'</div>'
+        + '<div class="headgrid">'
+        +   '<div class="field" contenteditable="true">'+(state.lang==='ar'?'اسم الطالب:':'Student Name:')+'</div>'
+        +   '<div class="field" contenteditable="true">'+(state.lang==='ar'?'الصف:':'Class:')+'</div>'
+        +   '<div class="field" contenteditable="true">'+(state.lang==='ar'?'المادة:':'Subject:')+'</div>'
+        +   '<div class="field" contenteditable="true">'+(state.lang==='ar'?'التاريخ:':'Date:')+'</div>'
+        + '</div>'
+        + '<div class="notice" style="margin-top:6px">'+header+(code?(' — '+(state.lang==='ar'?'رمز: ':'Code: ')+code):'')+'</div>';
+      var logo = document.createElement('div'); logo.className='logo';
+      logo.innerHTML = document.querySelector('header .logo').innerHTML;
+      if(state.lang==='en'){
+        head.appendChild(logo); head.appendChild(headinfo); // LTR: logo left
+      } else {
+        head.appendChild(headinfo); head.appendChild(logo); // RTL: logo right
+      }
+      section.appendChild(head);
+
+      var list = shuffleQ ? shuffle(qs.slice()) : qs.slice();
+      list.forEach(function(q,qi){
+        var block = document.createElement('div'); block.className='q';
+        var num = (state.lang==='ar'? toArabicDigits(qi+1) : (qi+1));
+        block.innerHTML = '<div><b>'+num+') </b>'+q.text+'</div>';
         if(q.type==='mcq'){
-          var ch = mk('div','choices');
-          var ops = q.options.slice(); if(shC) ops = shuffle(ops);
-          ops.forEach(function(o){ ch.innerHTML += '<div class="choice"><span class="bubble"></span>'+o+'</div>'; });
-          b.appendChild(ch);
-        }else{
-          b.innerHTML += '<div class="small">إجابة مقالية:</div>'+new Array(6).join('<div style="border-bottom:1px solid #000;height:24px;margin:8px 0"></div>');
+          var ch = document.createElement('div'); ch.className='choices';
+          var ops = q.options.slice(); if(shuffleC) ops = shuffle(ops);
+          // label letters
+          var letters_ar = ['أ','ب','ج','د'], letters_en=['A','B','C','D'];
+          ops.forEach(function(o,i){
+            var lab = (state.lang==='ar'? letters_ar[i] : letters_en[i]);
+            var line = document.createElement('div'); line.className='choice-line';
+            line.innerHTML = '<span class="bubble"></span><span>(' + lab + ')</span><span>'+o+'</span>';
+            ch.appendChild(line);
+          });
+          block.appendChild(ch);
+        } else {
+          var lines = document.createElement('div');
+          var lbl = (state.lang==='ar'?'إجابة مقالية:':'Essay Answer:');
+          lines.innerHTML = '<div class="notice">'+lbl+'</div>' + new Array(6).join('<div style="border-bottom:1px solid #000;height:24px;margin:8px 0"></div>');
+          block.appendChild(lines);
         }
-        sec.appendChild(b);
+        section.appendChild(block);
       });
-      area.appendChild(sec);
+      prev.appendChild(section);
     }
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0, behavior:'smooth'});
   };
 
-  document.getElementById('print').onclick = function(){ window.print(); };
-});
+  // Export
+  $('#exportPDF').onclick = function(){ window.print(); };
+  $('#exportDocx').onclick = function(){
+    var html = '<html><head><meta charset="utf-8"></head><body '+(state.lang==='ar'?'dir="rtl"':'dir="ltr"')+'>' + document.getElementById('preview').innerHTML + '</body></html>';
+    var blob = new Blob(['\\ufeff', html], {type:'application/msword'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='exam.doc'; a.click(); URL.revokeObjectURL(a.href);
+  };
+})();
 </script>
 </body>
 </html>
