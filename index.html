@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>منسّق الاختبارات — نسخة مبسّطة</title>
+<style>
+  :root{--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--bg:#f7fafc;--card:#fff;--paper:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Simplified Arabic","Tahoma","Segoe UI",Arial,sans-serif}
+  header{position:sticky;top:0;background:#fff8;border-bottom:1px solid var(--line);backdrop-filter:saturate(180%) blur(6px);z-index:10}
+  .wrap{max-width:1100px;margin:auto;padding:12px 16px;display:flex;gap:10px;align-items:center}
+  .brand{font-weight:900}
+  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .btn.p{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff}
+  .btn.g{background:#f1f5f9}
+  .grid{display:grid;grid-template-columns:380px 1fr;gap:16px;padding:16px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  h2{margin:6px 0 12px;font-size:18px}
+  input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
+  textarea{min-height:90px;resize:vertical}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .qcard{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px;display:flex;gap:10px;align-items:flex-start;position:relative}
+  .handle{cursor:grab;color:#94a3b8}
+  .tools{position:absolute;inset-inline-end:8px;inset-block-start:8px;display:flex;gap:6px}
+  .tools button{background:#f1f5f9;border:1px solid #e5e7eb;border-radius:8px;padding:6px 8px;cursor:pointer}
+  .paper{background:var(--paper);color:#000;padding:18mm 16mm;width:210mm;min-height:297mm;margin:auto;box-shadow:0 0 0.5mm rgba(0,0,0,.05)}
+  .paper .header{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:start;margin-bottom:10px}
+  .paper .logo img{width:140px;height:auto}
+  .title{font-weight:800}
+  .small{font-size:12px;color:#334155}
+  .info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .field{border-bottom:1px solid #000;min-height:26px;padding:4px 6px}
+  .q{margin:10px 0;padding-bottom:8px;border-bottom:1px dashed #94a3b8}
+  .choices{display:grid;gap:4px;margin-top:6px}
+  .bubble{width:18px;height:18px;border:2px solid #000;border-radius:50%;display:inline-block;margin-left:6px}
+  .footer{display:flex;justify-content:center;margin:18px 0 8px}
+  .x{border:1px solid #e2e8f0;border-radius:999px;padding:10px 14px;text-decoration:none;color:#0f172a;background:#fff}
+  @media print{header,.controls,.footer{display:none!important} body{background:#fff} .paper{margin:0;box-shadow:none;page-break-after:always}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <!-- غيّر قيمة LOGO_SRC تحت لجعل الشعار داخليًا أو من رابط -->
+    <img id="topLogo" alt="شعار الهيئة" style="height:42px;border-radius:6px" />
+    <span class="brand">منسّق الاختبارات — نسخة مبسّطة</span>
+    <div class="controls" style="margin-inline-start:auto;display:flex;gap:8px">
+      <button id="build" class="btn p">أنشئ الورقة + معاينة</button>
+      <button id="print" class="btn g">تصدير PDF</button>
+    </div>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h2>الأسئلة</h2>
+    <div style="display:flex;gap:8px">
+      <select id="qType"><option value="mcq">اختياري</option><option value="essay">مقالي</option></select>
+      <button id="add" class="btn g">أضف السؤال</button>
+    </div>
+    <div id="cards" class="list" style="margin-top:8px"></div>
+
+    <h2 style="margin-top:16px">لصق جماعي</h2>
+    <textarea id="bulk" placeholder="س: ما تعريف إدارة المشروع؟
+أ) التخطيط والتنفيذ*
+ب) التصميم فقط
+ج) الصيانة فقط
+
+س: ما دور مدير المشروع؟
+- التخطيط*
+- لا شيء
+- المراقبة"></textarea>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button id="preview" class="btn g">معاينة</button>
+      <button id="import" class="btn p">تحويل إلى بطاقات</button>
+    </div>
+    <div id="bulkPrev" class="small" style="margin-top:6px;color:#475569"></div>
+
+    <h2 style="margin-top:16px">إعدادات</h2>
+    <input id="title" value="اختبار الفترة الأولى" />
+    <input id="header" value="الهيئة الملكية — الثانوية ........ — الفصل: الأول — العام: 1447 هـ" style="margin-top:6px" />
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <label>خلط الأسئلة</label><select id="shQ"><option value="yes">نعم</option><option value="no">لا</option></select>
+      <label>خلط الخيارات</label><select id="shC"><option value="yes">نعم</option><option value="no">لا</option></select>
+      <label>النماذج</label><select id="vars"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+      <input id="code" placeholder="رمز (اختياري)" />
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>المعاينة</h2>
+    <div id="previewArea"><div class="small">أضف بطاقات ثم اضغط "أنشئ الورقة + معاينة".</div></div>
+  </section>
+</div>
+
+<div class="footer">
+  <a class="x" href="https://x.com/malsadhan01" target="_blank" rel="noopener">تابعني على X</a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // 1) الشعار: اختر أحد الخيارين
+  // أ) ملف داخلي بجانب index.html
+  var LOGO_SRC = 'logo-rcjy.jpg';
+  // ب) أو رابط مباشر للشعار (مثال):
+  // var LOGO_SRC = 'https://your-cdn.com/rcjy-logo.jpg';
+  document.getElementById('topLogo').src = LOGO_SRC;
+
+  // أدوات مساعدة
+  var cards = document.getElementById('cards');
+  function mk(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  function shuffle(a){ return a.map(function(x){return [Math.random(),x]}).sort(function(a,b){return a[0]-b[0]}).map(function(x){return x[1]}); }
+
+  // إضافة بطاقة سؤال
+  function addCard(obj){
+    obj = obj || {type:'mcq', text:'اكتب السؤال هنا؟', options:['خيار 1','خيار 2','خيار 3'], correctIndex:0};
+    var card = mk('div','qcard');
+    card.appendChild(mk('span','handle','↕'));
+    var body = mk('div','', '<div class="qtext" contenteditable="true">'+(obj.text||'اكتب السؤال هنا؟')+'</div>');
+    if(obj.type==='mcq'){
+      var ch = mk('div','choices');
+      (obj.options||['خيار 1','خيار 2','خيار 3']).forEach(function(o,i){
+        ch.appendChild(mk('div','choice', (i===obj.correctIndex?'<b>*</b> ':'') + o));
+      });
+      body.appendChild(ch);
+    }else{
+      body.appendChild(mk('div','small','[إجابة مقالية: اكتب تعليمات مختصرة هنا]'));
+    }
+    card.appendChild(body);
+    var tools = mk('div','tools');
+    var del = mk('button','', 'حذف'); var type = mk('button','', obj.type==='mcq'?'تحويل لمقالي':'تحويل لاختياري');
+    del.onclick=function(){ card.remove(); };
+    type.onclick=function(){
+      var isMCQ = !!card.querySelector('.choices');
+      if(isMCQ){
+        card.querySelector('.choices').remove();
+        body.appendChild(mk('div','small','[إجابة مقالية: اكتب تعليمات مختصرة هنا]'));
+        type.textContent='تحويل لاختياري';
+      }else{
+        var ch2 = mk('div','choices');
+        ch2.innerHTML = '<div class="choice"><b>*</b> خيار 1</div><div class="choice">خيار 2</div><div class="choice">خيار 3</div>';
+        body.querySelector('.small').remove();
+        body.appendChild(ch2);
+        type.textContent='تحويل لمقالي';
+      }
+    };
+    tools.appendChild(del); tools.appendChild(type); card.appendChild(tools);
+    cards.appendChild(card);
+  }
+
+  // لصق جماعي: يعتمد علامة الاستفهام
+  function norm(s){ return (s||'').replace(/\r/g,'').replace(/[\u200f\u200e]/g,'').trim(); }
+  function parseBulk(text){
+    var t = norm(text); if(!t) return [];
+    var lines = t.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+    var out=[], currentQ=null, opts=[];
+    function push(){
+      if(!currentQ) return;
+      if(opts.length>=2){
+        var correct = opts.findIndex(function(o){return /\*$/.test(o);}); if(correct<0) correct=0;
+        var clean = opts.map(function(o){return o.replace(/\*+$/,'').replace(/^([A-Da-dأ-د]\)|[A-Da-d]\. |[-•–]\s|[\u2022•]\s/,'');});
+        out.push({type:'mcq', text:currentQ, options:clean, correctIndex:correct});
+      }else{
+        out.push({type:'essay', text:currentQ});
+      }
+      currentQ=null; opts=[];
+    }
+    lines.forEach(function(ln){
+      if(/[؟?]/.test(ln)){ if(currentQ) push(); currentQ = ln.replace(/^س[:：.\-]?\s*/,'').trim(); }
+      else if(currentQ){ opts.push(ln); }
+    });
+    push(); return out;
+  }
+
+  // أزرار واجهة
+  document.getElementById('add').onclick = function(){ addCard(); };
+  document.getElementById('preview').onclick = function(){
+    var arr = parseBulk(document.getElementById('bulk').value||'');
+    document.getElementById('bulkPrev').innerHTML = arr.length ? arr.map(function(q,i){
+      return '<div>('+(i+1)+') '+q.text+' — <b>'+(q.type==='mcq'?'اختياري':'مقالي')+'</b></div>';
+    }).join('') : 'لا شيء للمعاينة — تأكد من علامة الاستفهام.';
+  };
+  document.getElementById('import').onclick = function(){
+    var arr = parseBulk(document.getElementById('bulk').value||''); if(!arr.length) return alert('لا توجد أسئلة صالحة');
+    arr.forEach(addCard); document.getElementById('bulk').value=''; document.getElementById('bulkPrev').innerHTML='';
+  };
+
+  function readCards(){
+    var list=[]; Array.prototype.forEach.call(cards.children, function(card){
+      var text = (card.querySelector('.qtext')||{}).innerText || ''; text=text.trim();
+      var mcq = card.querySelector('.choices');
+      if(mcq){
+        var opts = Array.prototype.map.call(mcq.querySelectorAll('.choice'), function(c){ return c.textContent.replace('*','').trim(); });
+        var correct = Array.prototype.findIndex.call(mcq.querySelectorAll('.choice'), function(c){ return /\*/.test(c.textContent); });
+        if(correct<0) correct=0;
+        list.push({type:'mcq', text:text, options:opts, correctIndex:correct});
+      }else{
+        list.push({type:'essay', text:text});
+      }
+    }); return list;
+  }
+
+  document.getElementById('build').onclick = function(){
+    var qs = readCards(); if(!qs.length) return alert('أضف بطاقات أسئلة أولًا');
+    var title = document.getElementById('title').value.trim()||'اختبار';
+    var header = document.getElementById('header').value.trim();
+    var n = Number(document.getElementById('vars').value);
+    var shQ = document.getElementById('shQ').value==='yes';
+    var shC = document.getElementById('shC').value==='yes';
+    var code = document.getElementById('code').value.trim();
+    var area = document.getElementById('previewArea'); area.innerHTML='';
+
+    for(var v=0; v<n; v++){
+      var sec = mk('section','paper');
+      var head = mk('div','header');
+      head.innerHTML =
+        '<div><div class="title">'+title+' — نموذج '+String.fromCharCode(65+v)+'</div>'
+        +'<div class="info">'
+        +'<div class="field" contenteditable="true">اسم الطالب:</div>'
+        +'<div class="field" contenteditable="true">الصف:</div>'
+        +'<div class="field" contenteditable="true">المادة:</div>'
+        +'<div class="field" contenteditable="true">التاريخ:</div>'
+        +'</div><div class="small" style="margin-top:6px">'+header+(code?(' — رمز: '+code):'')+'</div></div>'
+        +'<div class="logo"><img src="'+LOGO_SRC+'" alt="شعار الهيئة"></div>';
+      sec.appendChild(head);
+
+      var list = shQ ? shuffle(qs.slice()) : qs.slice();
+      list.forEach(function(q,i){
+        var b = mk('div','q');
+        b.innerHTML = '<div><b>'+(i+1)+')</b> '+q.text+'</div>';
+        if(q.type==='mcq'){
+          var ch = mk('div','choices');
+          var ops = q.options.slice(); if(shC) ops = shuffle(ops);
+          ops.forEach(function(o){ ch.innerHTML += '<div class="choice"><span class="bubble"></span>'+o+'</div>'; });
+          b.appendChild(ch);
+        }else{
+          b.innerHTML += '<div class="small">إجابة مقالية:</div>'+new Array(6).join('<div style="border-bottom:1px solid #000;height:24px;margin:8px 0"></div>');
+        }
+        sec.appendChild(b);
+      });
+      area.appendChild(sec);
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  document.getElementById('print').onclick = function(){ window.print(); };
+});
+</script>
+</body>
+</html>
